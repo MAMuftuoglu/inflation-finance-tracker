@@ -2,3 +2,4 @@
 .venv/
 .cursor/
 stock_info.*
+__pycache__/
