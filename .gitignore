@@ -1,5 +1,7 @@
 .env
 .venv/
 .cursor/
+.vscode/
 stock_info.*
 __pycache__/
+*.db
