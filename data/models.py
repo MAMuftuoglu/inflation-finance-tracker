@@ -1,7 +1,6 @@
 from peewee import (
     DateField,
     DecimalField,
-    IntegerField,
     TextField,
 )
 
@@ -10,7 +9,7 @@ from data.db import BaseModel, db
 
 class SharePurchase(BaseModel):
     symbol = TextField(index=True)
-    quantity = IntegerField()
+    quantity = DecimalField(max_digits=18, decimal_places=6, auto_round=True)
     cost = DecimalField(max_digits=18, decimal_places=6, auto_round=True)
     purchase_date = DateField(index=True)
 class ShareMarketMap(BaseModel):

@@ -1,8 +1,11 @@
 from __future__ import annotations
 from typing import List
+from decimal import Decimal
+from datetime import date
 
 from data.models import SharePurchase, ShareMarketMap
-from core.dto import PurchaseRow
+from data.db import db
+from core.dto import PurchaseRow, AddPurchaseResult
 
 def get_market_for_symbol(symbol: str) -> str | None:
     record = ShareMarketMap.get_or_none(ShareMarketMap.symbol == symbol)
@@ -26,3 +29,50 @@ def load_share_purchases_as_rows() -> List[PurchaseRow]:
             }
         )
     return rows
+
+def add_share_purchase(
+    symbol: str,
+    market: str,
+    quantity: Decimal,
+    cost: Decimal,
+    purchase_date: date,
+) -> AddPurchaseResult:
+    market_action: str = "unchanged"
+    try:
+        with db.atomic():
+            purchase = SharePurchase.create(
+                symbol=symbol, quantity=quantity, cost=cost, purchase_date=purchase_date
+            )
+            mapping, created = ShareMarketMap.get_or_create(
+                symbol=symbol, defaults={"market": market}
+            )
+            if created:
+                market_action = "created"
+            elif mapping.market != market:
+                mapping.market = market
+                mapping.save()
+                market_action = "updated"
+
+        return {
+            "success": True,
+            "purchase_id": purchase.id,
+            "symbol": symbol,
+            "market": market,
+            "quantity": quantity,
+            "cost": cost,
+            "purchase_date": purchase_date.isoformat(),
+            "market_action": market_action,
+            "error": None,
+        }
+    except Exception as exc:
+        return {
+            "success": False,
+            "purchase_id": None,
+            "symbol": symbol,
+            "market": market,
+            "quantity": quantity,
+            "cost": cost,
+            "purchase_date": purchase_date.isoformat(),
+            "market_action": "unchanged",
+            "error": str(exc),
+        }

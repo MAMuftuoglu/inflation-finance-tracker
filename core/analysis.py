@@ -90,4 +90,6 @@ def analyze(
 
     return results, totals
 
-
+def purchase_summary(purchases: Iterable[PurchaseRow]) -> None:
+    for purchase in purchases:
+        print(f"{purchase['symbol']} - {purchase['market']} - {purchase['quantity']} - {purchase['cost']} - {purchase['purchase_date']}")
