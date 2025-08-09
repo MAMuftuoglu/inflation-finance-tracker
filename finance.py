@@ -3,17 +3,20 @@ load_dotenv()
 
 from data.models import init_db
 from data.repositories import load_share_purchases_as_rows
-from stock_info import CPI_DATA
 from services.investment_service import run_investment_analysis
 from infra.twelvedata_price_provider import TwelveDataPriceProvider
+from infra.cpi_data_provider import BlsCpiDataProvider
 
 if __name__ == "__main__":
     init_db()
     shares = load_share_purchases_as_rows()
-    # Domain/service pipeline (temporary fixed prices = 0 until TwelveData integration)
+    earliest_date = shares[0]["purchase_date"]
+    cpi_data_provider = BlsCpiDataProvider()
+
     results, totals = run_investment_analysis(
         purchase_rows=shares,
-        cpi_rows=CPI_DATA,
+        initial_year=earliest_date,
+        cpi_data_provider=cpi_data_provider,
         price_provider=TwelveDataPriceProvider(),
     )
 

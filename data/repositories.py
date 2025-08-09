@@ -1,16 +1,17 @@
 from __future__ import annotations
-from typing import Dict, List
+from typing import List
 
 from data.models import SharePurchase
+from core.dto import PurchaseRow
 
 
-def load_share_purchases_as_rows() -> List[Dict]:
+def load_share_purchases_as_rows() -> List[PurchaseRow]:
     """Return share purchases as simple dict rows for the service layer.
 
-    Keys: name (str), quantity (int), cost (Decimal), purchase_date (YYYY-MM-DD)
+    Keys: symbol (str), quantity (int), cost (Decimal), purchase_date (YYYY-MM-DD)
     """
-    purchases = SharePurchase.select()
-    rows: List[Dict] = []
+    purchases = SharePurchase.select().order_by(SharePurchase.purchase_date.asc())
+    rows: List[PurchaseRow] = []
     for p in purchases:
         rows.append(
             {

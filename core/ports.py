@@ -8,4 +8,7 @@ class PriceProvider(Protocol):
         """Return mapping of symbol/name -> current price as Decimals."""
         ...
 
-
+class CpiDataProvider(Protocol):
+    def get_cpi_from_initial_date(self, initial_year: str) -> Dict[str, Decimal]:
+        """Return mapping of YYYY-MM -> CPI on that date as Decimals."""
+        ...
