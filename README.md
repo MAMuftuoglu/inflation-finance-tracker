@@ -42,7 +42,7 @@ BLS_API_KEY=your_bls_api_key_here
 # Optional: override database location; defaults to ./financial_report.db
 DB_PATH=D:\\Users\\you\\financial_report\\financial_report.db
 ```
-See (U.S. Bureau of Labor Statistics registration page)[https://data.bls.gov/registrationEngine/] for API key.
+See [U.S. Bureau of Labor Statistics registration page](https://data.bls.gov/registrationEngine/) for API key.
 
 You can create/edit it from PowerShell:
 ```powershell
