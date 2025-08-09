@@ -4,7 +4,8 @@ from datetime import date
 from decimal import Decimal
 from typing import Dict, Iterable, List, Tuple
 
-from core.models import Purchase, CompanyAggregate, PortfolioTotals
+from core.models import CompanyAggregate, PortfolioTotals
+from core.dto import PurchaseRow
 
 
 def _month_key(d: date) -> str:
@@ -16,18 +17,18 @@ def calculate_inflation_factor(purchase_date: date, cpi_index: Dict[str, Decimal
     purchase_cpi = cpi_index.get(purchase_month)
     if purchase_cpi is None:
         return Decimal("1")
-    latest_cpi = next(reversed(cpi_index.values()))  # assumes ordered by time
+    latest_cpi = cpi_index[max(cpi_index.keys())]
     return latest_cpi / purchase_cpi if purchase_cpi != 0 else Decimal("1")
 
 
 def analyze(
-    purchases: Iterable[Purchase],
+    purchases: Iterable[PurchaseRow],
     cpi_index: Dict[str, Decimal],
     current_prices: Dict[str, Decimal],
 ) -> Tuple[List[CompanyAggregate], PortfolioTotals]:
-    grouped: Dict[str, List[Purchase]] = defaultdict(list)
+    grouped: Dict[str, List[PurchaseRow]] = defaultdict(list)
     for p in purchases:
-        grouped[p.name].append(p)
+        grouped[p["symbol"]].append(p)
 
     results: List[CompanyAggregate] = []
 
@@ -49,11 +50,11 @@ def analyze(
             price = Decimal("0")
 
         for purchase in items:
-            qty = Decimal(purchase.quantity)
-            batch_cost = qty * purchase.unit_cost
+            qty = Decimal(purchase["quantity"])
+            batch_cost = qty * purchase["cost"]
             batch_current = qty * price
 
-            inflation_factor = calculate_inflation_factor(purchase.purchase_date, cpi_index)
+            inflation_factor = calculate_inflation_factor(date.fromisoformat(purchase["purchase_date"]), cpi_index)
             adjusted_cost = batch_cost * inflation_factor
 
             company_nominal_invested += batch_cost

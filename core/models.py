@@ -1,16 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from datetime import date
 from decimal import Decimal
-
-
-@dataclass(frozen=True)
-class Purchase:
-    name: str
-    quantity: int
-    unit_cost: Decimal
-    purchase_date: date
-
 
 @dataclass(frozen=True)
 class CompanyAggregate:

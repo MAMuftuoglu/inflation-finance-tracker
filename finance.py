@@ -4,7 +4,6 @@ load_dotenv()
 from data.models import init_db
 from data.repositories import load_share_purchases_as_rows
 from services.investment_service import run_investment_analysis
-from infra.twelvedata_price_provider import TwelveDataPriceProvider
 from infra.cpi_data_provider import BlsCpiDataProvider
 
 if __name__ == "__main__":
@@ -17,7 +16,6 @@ if __name__ == "__main__":
         purchase_rows=shares,
         initial_year=earliest_date,
         cpi_data_provider=cpi_data_provider,
-        price_provider=TwelveDataPriceProvider(),
     )
 
     print("\nInvestment Analysis:")
