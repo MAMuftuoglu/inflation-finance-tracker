@@ -5,3 +5,5 @@
 stock_info.*
 __pycache__/
 *.db
+build/
+dist/
